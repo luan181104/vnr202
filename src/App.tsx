@@ -101,7 +101,7 @@ function App() {
 
       {isMusicPlaying && (
         <audio autoPlay loop className="hidden">
-          <source src="/src/assets/nhucobachotrongngayvuidaithang.mp3" type="audio/mpeg" />
+          <source src="/assets/nhucobachotrongngayvuidaithang.mp3" type="audio/mpeg" />
         </audio>
       )}
     </div>
