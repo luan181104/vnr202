@@ -17,7 +17,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Lễ ký kết Hiệp định Giơnevơ chấm dứt chiến tranh Đông Dương, mở ra giai đoạn mới cho cách mạng Việt Nam.',
     year: '1954',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/8815845/pexels-photo-8815845.jpeg'
+    imageUrl: '/src/assets/gionevo.jpg'
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Nhân dân miền Bắc tích cực tham gia khôi phục kinh tế, xây dựng các công trình công nghiệp.',
     year: '1955-1960',
     category: 'north',
-    imageUrl: 'https://images.pexels.com/photos/4588441/pexels-photo-4588441.jpeg'
+    imageUrl: '/src/assets/xaydungmienbac.jpg'
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Quần chúng nhân dân miền Nam nổi dậy đấu tranh chống chính quyền Mỹ-Diệm, giành quyền làm chủ.',
     year: '1960',
     category: 'south',
-    imageUrl: 'https://images.pexels.com/photos/8828561/pexels-photo-8828561.jpeg'
+    imageUrl: '/src/assets/dongkhoi.jpg'
   },
   {
     id: 4,
@@ -41,7 +41,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Đại hội xác định đường lối cách mạng hai miền: xây dựng CNXH ở Bắc, giải phóng dân tộc ở Nam.',
     year: '1960',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/8369890/pexels-photo-8369890.jpeg'
+    imageUrl: '/src/assets/daihoidang3.jpg'
   },
   {
     id: 5,
@@ -49,7 +49,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Công trình công nghiệp nặng đầu tiên của miền Bắc, biểu tượng của sự nghiệp công nghiệp hóa.',
     year: '1963',
     category: 'north',
-    imageUrl: 'https://images.pexels.com/photos/247763/pexels-photo-247763.jpeg'
+    imageUrl: '/src/assets/gangthepthainguyen.jpg'
   },
   {
     id: 6,
@@ -57,7 +57,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Con đường huyền thoại chi viện cho miền Nam, biểu tượng của ý chí kiên cường của dân tộc.',
     year: '1959-1975',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'
+    imageUrl: '/src/assets/duongtruongson.jpg'
   },
   {
     id: 7,
@@ -65,7 +65,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Lực lượng vũ trang nhân dân miền Nam anh dũng chiến đấu chống quân Mỹ và bù nhìn.',
     year: '1965-1975',
     category: 'south',
-    imageUrl: 'https://images.pexels.com/photos/7865552/pexels-photo-7865552.jpeg'
+    imageUrl: '/src/assets/chiensimiennam.jpg'
   },
   {
     id: 8,
@@ -73,7 +73,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Lực lượng phòng không miền Bắc anh dũng bắn rơi máy bay Mỹ, bảo vệ bầu trời Tổ quốc.',
     year: '1965-1972',
     category: 'north',
-    imageUrl: 'https://images.pexels.com/photos/262577/pexels-photo-262577.jpeg'
+    imageUrl: '/src/assets/phongkhong.jpg'
   },
   {
     id: 9,
@@ -81,7 +81,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Tổng tiến công và nổi dậy lịch sử, làm chấn động thế giới và lung lay ý chí chiến tranh của Mỹ.',
     year: '1968',
     category: 'south',
-    imageUrl: 'https://images.pexels.com/photos/47344/tent-camp-night-star-47344.jpeg'
+    imageUrl: '/src/assets/tetmauthan.jpg'
   },
   {
     id: 10,
@@ -89,7 +89,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Chiến thắng vang dội chống chiến tranh phá hoại bằng máy bay B-52 của Mỹ.',
     year: '1972',
     category: 'north',
-    imageUrl: 'https://images.pexels.com/photos/73909/fighter-jet-military-weapon-aircraft-73909.jpeg'
+    imageUrl: '/src/assets/dienbienphu.jpg'
   },
   {
     id: 11,
@@ -97,7 +97,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Lễ ký kết Hiệp định Paris buộc Mỹ phải rút quân hoàn toàn khỏi Việt Nam.',
     year: '1973',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/6077447/pexels-photo-6077447.jpeg'
+    imageUrl: '/src/assets/hiepdinhpari.jpg'
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Chiến dịch cuối cùng giải phóng hoàn toàn miền Nam, thống nhất đất nước.',
     year: '1975',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/2382681/pexels-photo-2382681.jpeg'
+    imageUrl: '/src/assets/xetang.jpg'
   },
   {
     id: 13,
@@ -113,7 +113,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Khoảnh khắc lịch sử - xe tăng tiến vào Dinh Độc Lập, đất nước hoàn toàn thống nhất.',
     year: '1975',
     category: 'south',
-    imageUrl: 'https://images.pexels.com/photos/3566187/pexels-photo-3566187.jpeg'
+    imageUrl: '/src/assets/xetang2.jpg'
   },
   {
     id: 14,
@@ -121,7 +121,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Người dân cả nước hân hoan đón nhận thắng lợi, đất nước hoàn toàn độc lập và thống nhất.',
     year: '1975',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/1157557/pexels-photo-1157557.jpeg'
+    imageUrl: '/src/assets/niemvui.jpg'
   },
   {
     id: 15,
@@ -129,7 +129,7 @@ const galleryItems: GalleryItem[] = [
     description: 'Sau ngày thống nhất, cả nước hướng tới xây dựng và phát triển đất nước xã hội chủ nghĩa.',
     year: '1976',
     category: 'both',
-    imageUrl: 'https://images.pexels.com/photos/3951628/pexels-photo-3951628.jpeg'
+    imageUrl: '/src/assets/xaydungdatnuoc.jpg'
   }
 ];
 

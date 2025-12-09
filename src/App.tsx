@@ -93,6 +93,7 @@ function App() {
 
       <footer className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white py-6 mt-12">
         <div className="container mx-auto px-4 text-center">
+          <p>Nhóm 4</p>
           <p className="font-semibold">Sản phẩm sáng tạo môn Lịch sử Đảng Cộng sản Việt Nam</p>
           <p className="text-sm mt-2 text-red-100">Giai đoạn 1954-1975: Từ Hiệp định Giơnevơ đến Đại thắng mùa Xuân</p>
         </div>
@@ -100,7 +101,7 @@ function App() {
 
       {isMusicPlaying && (
         <audio autoPlay loop className="hidden">
-          <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+          <source src="/src/assets/nhucobachotrongngayvuidaithang.mp3" type="audio/mpeg" />
         </audio>
       )}
     </div>
