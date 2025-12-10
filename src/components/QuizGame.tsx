@@ -1,5 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Trophy, Clock, CheckCircle, XCircle, RotateCcw, Play } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { ref, update, get, onValue } from "firebase/database";
+import { db } from "../components/firebase";
+
+import {
+  Trophy,
+  Clock,
+  CheckCircle,
+  XCircle,
+  RotateCcw,
+  Play,
+} from "lucide-react";
 
 interface Question {
   question: string;
@@ -101,63 +111,108 @@ const quizQuestions: Question[] = [
   }
 ];
 
-function QuizGame() {
+// 👉 FIX 1: hàm formatTime
+function formatTime(seconds: number) {
+  const m = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = (seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+export default function QuizGame({
+  roomId,
+  playerName,
+}: {
+  roomId: string;
+  playerName: string;
+}) {
   const [gameStarted, setGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(new Array(quizQuestions.length).fill(false));
+  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(
+    new Array(quizQuestions.length).fill(false)
+  );
   const [timeLeft, setTimeLeft] = useState(600);
   const [isFinished, setIsFinished] = useState(false);
 
+  // 👉 sanitize tên người chơi làm key Firebase
+  const safeName = playerName.replace(/[.#$[\]]/g, "_");
+
+  // Lắng nghe HOST start
+  useEffect(() => {
+    const statusRef = ref(db, `rooms/${roomId}/status`);
+    return onValue(statusRef, (snap) => {
+      if (snap.val() === "started") {
+        startGame();
+      }
+    });
+  }, []);
+
+  // Timer
   useEffect(() => {
     if (gameStarted && !isFinished && timeLeft > 0) {
-      const timer = setInterval(() => {
+      const t = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            setIsFinished(true);
+            finishGame();
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
-      return () => clearInterval(timer);
+
+      return () => clearInterval(t);
     }
   }, [gameStarted, isFinished, timeLeft]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const startGame = () => {
     setGameStarted(true);
     setCurrentQuestion(0);
-    setScore(0);
-    setShowResult(false);
     setSelectedAnswer(null);
-    setAnsweredQuestions(new Array(quizQuestions.length).fill(false));
+    setShowResult(false);
+    setScore(0);
     setTimeLeft(600);
+    setAnsweredQuestions(new Array(quizQuestions.length).fill(false));
     setIsFinished(false);
   };
 
-  const handleAnswer = (answerIndex: number) => {
+  // Lưu câu trả lời
+  const saveAnswerToFirebase = async (
+    answerIndex: number,
+    correct: boolean
+  ) => {
+    const playerRef = ref(db, `rooms/${roomId}/players/${safeName}`);
+    const snap = await get(playerRef);
+    const data = snap.val() || {};
+
+    update(playerRef, {
+      score: (data.score || 0) + (correct ? 1 : 0),
+      answers: {
+        ...(data.answers || {}),
+        [currentQuestion]: { answer: answerIndex, correct },
+      },
+    });
+  };
+
+  const handleAnswer = async (answerIndex: number) => {
     if (selectedAnswer !== null) return;
 
     setSelectedAnswer(answerIndex);
+    const correct =
+      answerIndex === quizQuestions[currentQuestion].correctAnswer;
+
     const newAnswered = [...answeredQuestions];
     newAnswered[currentQuestion] = true;
     setAnsweredQuestions(newAnswered);
 
-    if (answerIndex === quizQuestions[currentQuestion].correctAnswer) {
-      setScore(score + 1);
-    }
+    if (correct) setScore((s) => s + 1);
 
-    setTimeout(() => {
-      setShowResult(true);
-    }, 500);
+    await saveAnswerToFirebase(answerIndex, correct);
+
+    setTimeout(() => setShowResult(true), 300);
   };
 
   const nextQuestion = () => {
@@ -166,50 +221,59 @@ function QuizGame() {
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      setIsFinished(true);
+      finishGame();
     }
   };
 
+  const finishGame = async () => {
+  setIsFinished(true);
+
+  const timeUsed = 600 - timeLeft;
+
+  // Lưu vào players để theo dõi
+  update(ref(db, `rooms/${roomId}/players/${safeName}`), {
+    isFinished: true,
+    finalScore: score,
+    timeUsed: timeUsed,
+  });
+
+  // Lưu vào scores để Leaderboard đọc được
+  update(ref(db, `rooms/${roomId}/scores/${safeName}`), {
+    score: score,
+    time: timeUsed
+  });
+};
+
+
+
   const getScoreMessage = () => {
-    const percentage = (score / quizQuestions.length) * 100;
-    if (percentage >= 90) return { text: 'Xuất sắc!', color: 'text-green-600' };
-    if (percentage >= 70) return { text: 'Khá tốt!', color: 'text-blue-600' };
-    if (percentage >= 50) return { text: 'Trung bình!', color: 'text-yellow-600' };
-    return { text: 'Cần cố gắng thêm!', color: 'text-red-600' };
+    const p = (score / quizQuestions.length) * 100;
+    if (p >= 90) return { text: "Xuất sắc!", color: "text-green-600" };
+    if (p >= 70) return { text: "Khá tốt!", color: "text-blue-600" };
+    if (p >= 50) return { text: "Trung bình!", color: "text-yellow-600" };
+    return { text: "Cần cố gắng thêm!", color: "text-red-600" };
   };
 
+  // 👉 FIX 2: thêm biến question đúng tên
+  const question = quizQuestions[currentQuestion];
+
+  // ===================== UI =====================
   if (!gameStarted) {
     return (
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-xl shadow-xl p-8 text-center">
           <Trophy size={64} className="mx-auto text-yellow-500 mb-4" />
-          <h2 className="text-3xl font-bold text-red-700 mb-4">Trắc nghiệm Lịch sử</h2>
-          <p className="text-gray-600 mb-6">Kiểm tra kiến thức của bạn về giai đoạn 1954-1975</p>
-
-          <div className="bg-red-50 rounded-lg p-6 mb-6 text-left">
-            <h3 className="font-bold text-red-700 mb-3">Thông tin về bài thi:</h3>
-            <ul className="space-y-2 text-gray-700">
-              <li className="flex items-center">
-                <CheckCircle size={18} className="text-green-600 mr-2" />
-                <span>Tổng số câu hỏi: {quizQuestions.length}</span>
-              </li>
-              <li className="flex items-center">
-                <Clock size={18} className="text-blue-600 mr-2" />
-                <span>Thời gian: 10 phút</span>
-              </li>
-              <li className="flex items-center">
-                <Trophy size={18} className="text-yellow-600 mr-2" />
-                <span>Mỗi câu đúng: 1 điểm</span>
-              </li>
-            </ul>
-          </div>
+          <h2 className="text-3xl font-bold text-red-700 mb-4">
+            Trắc nghiệm Lịch sử
+          </h2>
 
           <button
-            onClick={startGame}
-            className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg hover:from-red-700 hover:to-red-800 transition-all transform hover:scale-105 shadow-lg flex items-center mx-auto"
+            onClick={() =>
+              update(ref(db, `rooms/${roomId}`), { status: "started" })
+            }
+            className="bg-red-600 text-white px-8 py-4 rounded-lg font-bold text-lg"
           >
-            <Play className="mr-2" />
-            Bắt đầu làm bài
+            <Play className="mr-2" /> Bắt đầu làm bài
           </button>
         </div>
       </div>
@@ -217,64 +281,31 @@ function QuizGame() {
   }
 
   if (isFinished) {
-    const scoreMsg = getScoreMessage();
+    const msg = getScoreMessage();
     return (
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl shadow-xl p-8 text-center animate-fadeIn">
-          <Trophy size={64} className="mx-auto text-yellow-500 mb-4 animate-pulse-slow" />
-          <h2 className="text-3xl font-bold text-red-700 mb-4">Kết quả bài thi</h2>
+        <div className="bg-white rounded-xl shadow-xl p-8 text-center">
+          <h2 className="text-3xl font-bold text-red-700">Kết quả bài thi</h2>
 
-          <div className="bg-gradient-to-br from-red-50 to-yellow-50 rounded-lg p-8 mb-6">
-            <div className={`text-6xl font-bold mb-2 ${scoreMsg.color}`}>
-              {score}/{quizQuestions.length}
-            </div>
-            <div className={`text-2xl font-bold mb-4 ${scoreMsg.color}`}>
-              {scoreMsg.text}
-            </div>
-            <div className="text-gray-600">
-              Tỷ lệ chính xác: {((score / quizQuestions.length) * 100).toFixed(1)}%
-            </div>
-          </div>
-
-          <div className="grid grid-cols-5 gap-2 mb-6">
-            {quizQuestions.map((_, index) => {
-              const isCorrect = index < answeredQuestions.length &&
-                               answeredQuestions[index] &&
-                               selectedAnswer === quizQuestions[index].correctAnswer;
-              return (
-                <div
-                  key={index}
-                  className={`h-10 rounded flex items-center justify-center font-bold ${
-                    !answeredQuestions[index]
-                      ? 'bg-gray-300 text-gray-600'
-                      : isCorrect
-                      ? 'bg-green-500 text-white'
-                      : 'bg-red-500 text-white'
-                  }`}
-                >
-                  {index + 1}
-                </div>
-              );
-            })}
+          <div className={`text-6xl font-bold ${msg.color}`}>
+            {score}/{quizQuestions.length}
           </div>
 
           <button
             onClick={startGame}
-            className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition-all transform hover:scale-105 shadow-lg flex items-center mx-auto"
+            className="bg-red-600 text-white px-8 py-3 rounded-lg mt-4 font-bold"
           >
-            <RotateCcw className="mr-2" />
-            Làm lại
+            <RotateCcw /> Làm lại
           </button>
         </div>
       </div>
     );
   }
 
-  const question = quizQuestions[currentQuestion];
-
   return (
     <div className="max-w-3xl mx-auto">
       <div className="bg-white rounded-xl shadow-xl p-6 mb-6">
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-4">
             <div className="bg-red-100 px-4 py-2 rounded-lg">
@@ -282,47 +313,66 @@ function QuizGame() {
                 Câu {currentQuestion + 1}/{quizQuestions.length}
               </span>
             </div>
+
             <div className="bg-green-100 px-4 py-2 rounded-lg">
-              <span className="text-green-700 font-bold">
-                Điểm: {score}
-              </span>
+              <span className="text-green-700 font-bold">Điểm: {score}</span>
             </div>
           </div>
-          <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
-            timeLeft < 60 ? 'bg-red-100 animate-glow' : 'bg-blue-100'
-          }`}>
-            <Clock size={20} className={timeLeft < 60 ? 'text-red-600' : 'text-blue-600'} />
-            <span className={`font-bold ${timeLeft < 60 ? 'text-red-600' : 'text-blue-600'}`}>
+
+          {/* Timer */}
+          <div
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
+              timeLeft < 60 ? "bg-red-100 animate-glow" : "bg-blue-100"
+            }`}
+          >
+            <Clock
+              size={20}
+              className={timeLeft < 60 ? "text-red-600" : "text-blue-600"}
+            />
+            <span
+              className={`font-bold ${
+                timeLeft < 60 ? "text-red-600" : "text-blue-600"
+              }`}
+            >
               {formatTime(timeLeft)}
             </span>
           </div>
         </div>
 
+        {/* Thanh tiến độ */}
         <div className="mb-6">
           <div className="bg-gray-200 h-2 rounded-full overflow-hidden">
             <div
               className="bg-gradient-to-r from-red-600 to-red-700 h-full transition-all duration-300"
-              style={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
+              style={{
+                width: `${
+                  ((currentQuestion + 1) / quizQuestions.length) * 100
+                }%`,
+              }}
             ></div>
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-gray-800 mb-6">{question.question}</h3>
+        {/* Question */}
+        <h3 className="text-xl font-bold text-gray-800 mb-6">
+          {question.question}
+        </h3>
 
+        {/* OPTIONS */}
         <div className="space-y-3">
           {question.options.map((option, index) => {
-            let bgColor = 'bg-gray-50 hover:bg-gray-100';
-            let borderColor = 'border-gray-300';
+            let bg = "bg-gray-50 hover:bg-gray-100";
+            let border = "border-gray-300";
             let icon = null;
 
             if (selectedAnswer !== null) {
               if (index === question.correctAnswer) {
-                bgColor = 'bg-green-100';
-                borderColor = 'border-green-500';
+                bg = "bg-green-100";
+                border = "border-green-500";
                 icon = <CheckCircle className="text-green-600" />;
               } else if (index === selectedAnswer) {
-                bgColor = 'bg-red-100';
-                borderColor = 'border-red-500';
+                bg = "bg-red-100";
+                border = "border-red-500";
                 icon = <XCircle className="text-red-600" />;
               }
             }
@@ -332,9 +382,9 @@ function QuizGame() {
                 key={index}
                 onClick={() => handleAnswer(index)}
                 disabled={selectedAnswer !== null}
-                className={`w-full p-4 rounded-lg border-2 ${borderColor} ${bgColor} text-left transition-all transform hover:scale-102 disabled:cursor-not-allowed flex items-center justify-between`}
+                className={`w-full p-4 rounded-lg border-2 ${border} ${bg} text-left transition-all flex items-center justify-between`}
               >
-                <span className="font-medium">{option}</span>
+                <span>{option}</span>
                 {icon}
               </button>
             );
@@ -342,8 +392,8 @@ function QuizGame() {
         </div>
 
         {showResult && (
-          <div className="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded animate-fadeIn">
-            <p className="text-sm text-gray-700">
+          <div className="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            <p>
               <span className="font-bold text-blue-700">Giải thích: </span>
               {question.explanation}
             </p>
@@ -355,14 +405,14 @@ function QuizGame() {
         <div className="text-center">
           <button
             onClick={nextQuestion}
-            className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition-all transform hover:scale-105 shadow-lg"
+            className="bg-red-600 text-white px-8 py-3 rounded-lg font-bold"
           >
-            {currentQuestion < quizQuestions.length - 1 ? 'Câu tiếp theo' : 'Xem kết quả'}
+            {currentQuestion < quizQuestions.length - 1
+              ? "Câu tiếp theo"
+              : "Xem kết quả"}
           </button>
         </div>
       )}
     </div>
   );
 }
-
-export default QuizGame;

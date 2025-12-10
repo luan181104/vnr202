@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Home, BookOpen, GamepadIcon, ImageIcon, Volume2, VolumeX } from 'lucide-react';
 import ContentSection from './components/ContentSection';
-import QuizGame from './components/QuizGame';
 import Gallery from './components/Gallery';
 import HomePage from './components/HomePage';
+import QuizLobby from './components/QuizLobby';
 
 function App() {
   const [currentSection, setCurrentSection] = useState<'home' | 'content' | 'quiz' | 'gallery'>('home');
@@ -86,7 +86,7 @@ function App() {
         <div className="animate-fadeIn">
           {currentSection === 'home' && <HomePage onNavigate={setCurrentSection} />}
           {currentSection === 'content' && <ContentSection />}
-          {currentSection === 'quiz' && <QuizGame />}
+          {currentSection === 'quiz' && <QuizLobby />}
           {currentSection === 'gallery' && <Gallery />}
         </div>
       </main>
