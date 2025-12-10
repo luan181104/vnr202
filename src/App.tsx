@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Home, BookOpen, GamepadIcon, ImageIcon, Volume2, VolumeX } from 'lucide-react';
+import { Home, BookOpen, GamepadIcon, ImageIcon, Volume2, VolumeX, Puzzle } from 'lucide-react';
 import ContentSection from './components/ContentSection';
 import Gallery from './components/Gallery';
 import HomePage from './components/HomePage';
 import QuizLobby from './components/QuizLobby';
+import Crossword from './components/Crossword';
 
 function App() {
-  const [currentSection, setCurrentSection] = useState<'home' | 'content' | 'quiz' | 'gallery'>('home');
+  const [currentSection, setCurrentSection] = useState<'home' | 'content' | 'quiz' | 'gallery' | 'crossword'>('home');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
   useEffect(() => {
@@ -61,6 +62,16 @@ function App() {
               </button>
 
               <button
+                onClick={() => setCurrentSection('crossword')}
+                className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all transform hover:scale-105 ${
+                  currentSection === 'crossword' ? 'bg-red-800 shadow-lg' : 'hover:bg-red-600'
+                }`}
+              >
+                <Puzzle size={18} />
+                <span className="hidden sm:inline">Ô chữ</span>
+              </button>
+
+              <button
                 onClick={() => setCurrentSection('gallery')}
                 className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all transform hover:scale-105 ${
                   currentSection === 'gallery' ? 'bg-red-800 shadow-lg' : 'hover:bg-red-600'
@@ -68,7 +79,7 @@ function App() {
               >
                 <ImageIcon size={18} />
                 <span className="hidden sm:inline">Thư viện</span>
-              </button>
+              </button>            
 
               <button
                 onClick={toggleMusic}
@@ -88,6 +99,7 @@ function App() {
           {currentSection === 'content' && <ContentSection />}
           {currentSection === 'quiz' && <QuizLobby />}
           {currentSection === 'gallery' && <Gallery />}
+          {currentSection === 'crossword' && (<Crossword />)}
         </div>
       </main>
 

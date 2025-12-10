@@ -1,0 +1,425 @@
+import { useState } from 'react';
+import { Lightbulb, X, CheckCircle, AlertCircle } from 'lucide-react';
+
+interface CrosswordClue {
+  clue: string;
+  answer: string;
+  goldenLetterIndex: number;
+  hintImage: string;
+}
+
+const crosswordClues: CrosswordClue[] = [
+  {
+    clue: '______ chia cắt đất nước thành hai miền',
+    answer: 'VITUYEN17',
+    goldenLetterIndex: 2,
+    hintImage: '/assets/vituyen17.jpg'
+  },
+  {
+    clue: 'Phong trào ______ 1960 bùng nổ ở Bến Tre',
+    answer: 'DONGKHOI',
+    goldenLetterIndex: 5,
+    hintImage: '/assets/dongkhoi.jpg'
+  },
+  {
+    clue: '______ Đảng lần III xác định đường lối cách mạng hai miền',
+    answer: 'DAIHOI',
+    goldenLetterIndex: 4,
+    hintImage: '/assets/daihoidang3.jpg'
+  },
+  {
+    clue: '______ Dân tộc Giải phóng miền Nam thành lập 12/1960',
+    answer: 'MATTRAN',
+    goldenLetterIndex: 6,
+    hintImage: '/assets/dongkhoi.jpg'
+  },
+  {
+    clue: ' Hiệp  định ______ chia cắt đất nước tại vĩ tuyến 17 năm 1954',
+    answer: 'GIONEVO',
+    goldenLetterIndex: 0,
+    hintImage: '/assets/gionevo.jpg'
+  },
+  {
+    clue: 'Tết ______ 1968 - tổng tiến công làm lung lay ý chí Mỹ',
+    answer: 'MAUTHAN',
+    goldenLetterIndex: 6,
+    hintImage: '/assets/tetmauthan.jpg'
+  },
+  {
+    clue: '______ miền Bắc bắn rơi hàng trăm máy bay B-52',
+    answer: 'PHONGKHONG',
+    goldenLetterIndex: 1,
+    hintImage: '/assets/phongkhong.jpg'
+  },
+  {
+    clue: 'Hiệp định ______ 1973 buộc Mỹ rút quân khỏi Việt Nam',
+    answer: 'PARIS',
+    goldenLetterIndex: 1,
+    hintImage: '/assets/hiepdinhpari.jpg'
+  },
+  {
+    clue: 'Chiến dịch______1975 mở màn Chiến dịch Hồ Chí Minh',
+    answer: 'TAYNGUYEN',
+    goldenLetterIndex: 0,
+    hintImage: '/assets/xaydungdatnuoc.jpg'
+  },//tiep
+  {
+    clue: '______ ra đời ngày 3/2/1930',
+    answer: 'DANGCONGSANVIETNAM',
+    goldenLetterIndex: 0,
+    hintImage: '/assets/dangcongsan.jpg'
+  },
+  {
+    clue: '______ khởi xướng đường lối đổi mới năm 1986',
+    answer: 'DAIHOI6',
+    goldenLetterIndex: 1,
+    hintImage: '/assets/daihoi6.jpg'
+  },
+  {
+    clue: ' Ngày 18/8/1965, trên đất ______ đã diễn ra trận đánh diệt Mỹ quy mô lớn đầu tiên của quân và dân miền Nam.',
+    answer: 'VANTUONG',
+    goldenLetterIndex: 3,
+    hintImage: '/assets/vantuong.jpg'
+  },
+  {
+    clue: 'Khu vực được dựng lên để gom dân, cô lập cơ sở cách mạng gọi là ______',
+    answer: 'APCHIENLUOC',
+    goldenLetterIndex: 6,
+    hintImage: '/assets/apchienluoc.jpg'
+  },
+  {
+    clue: 'Xe tăng T-54 mang số hiệu 843 do ______ điều khiển đã húc đổ cổng Dinh Độc Lập',
+    answer: 'BUIQUANGTHAN',
+    goldenLetterIndex: 1,
+    hintImage: '/assets/hauphuong.jpg'
+  },
+  {
+    clue: 'Nhà máy nhiệt điện lớn của Quảng Ninh, một trong những biểu tượng của công nghiệp nặng miền Bắc thời chống Mỹ?',
+    answer: 'UONGBI',
+    goldenLetterIndex: 1,
+    hintImage: '/assets/uongbi.jpg'
+  },
+  {
+    clue: 'Chiến lược quân sự của Mỹ nhằm "tìm diệt" lực lượng cách mạng, đẩy mạnh bình định miền Nam, thực hiện từ 1965 đến 1968.',
+    answer: 'CHIENTRANHCUCBO',
+    goldenLetterIndex: 10,
+    hintImage: '/assets/chientranhcucbo.jpg'
+  },
+    
+];
+
+function Crossword() {
+  const [answers, setAnswers] = useState<string[]>(new Array(crosswordClues.length).fill(''));
+  const [selectedClue, setSelectedClue] = useState<number | null>(null);
+  const [hints, setHints] = useState<boolean[]>(new Array(crosswordClues.length).fill(false));
+  const [submitted, setSubmitted] = useState(false);
+  const [modalImage, setModalImage] = useState<string | null>(null);
+
+
+  const handleInputChange = (index: number, value: string) => {
+    const newAnswers = [...answers];
+    newAnswers[index] = value.toUpperCase().replace(/[^A-Z0-9ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ]/g, '');
+    setAnswers(newAnswers);
+  };
+
+  const toggleHint = (index: number) => {
+    const newHints = [...hints];
+    newHints[index] = !newHints[index];
+    setHints(newHints);
+  };
+
+  const getVerticalWord = () => {
+    return crosswordClues
+      .map((clue, index) => {
+        const answer = answers[index];
+        if (answer.length > clue.goldenLetterIndex) {
+          return answer[clue.goldenLetterIndex];
+        }
+        return '';
+      })
+      .join('');
+  };
+
+  const checkAnswer = (index: number) => {
+    return answers[index] === crosswordClues[index].answer;
+  };
+
+  const allCorrect = crosswordClues.every((_, index) => checkAnswer(index));
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+  };
+
+  const resetGame = () => {
+    setAnswers(new Array(crosswordClues.length).fill(''));
+    setSubmitted(false);
+    setSelectedClue(null);
+    setHints(new Array(crosswordClues.length).fill(false));
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-red-700 mb-4">Trò chơi Ô chữ lịch sử</h2>
+        <p className="text-gray-600">Điền đáp án cho 16 hàng ngang. 16 ô vàng tạo thành từ khóa cuối cùng!</p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-xl shadow-xl p-6">
+            <div className="space-y-4">
+              {crosswordClues.map((clue, index) => (
+                <div
+                  key={index}
+                  onClick={() => setSelectedClue(index)}
+                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer transform hover:scale-102 ${
+                    selectedClue === index
+                      ? 'border-red-600 bg-red-50 shadow-lg'
+                      : submitted && checkAnswer(index)
+                      ? 'border-green-500 bg-green-50'
+                      : submitted
+                      ? 'border-red-300 bg-red-50'
+                      : 'border-gray-200 hover:border-red-400'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="font-bold text-red-700 mb-1">
+                        Hàng {index + 1}: {clue.clue}
+                      </div>
+                      <div className="text-sm text-gray-500 mb-2">
+                        ({clue.answer.length} chữ)
+                      </div>
+                    </div>
+                    {submitted && (
+                      <div className="ml-2">
+                        {checkAnswer(index) ? (
+                          <CheckCircle className="text-green-600" size={24} />
+                        ) : (
+                          <AlertCircle className="text-red-600" size={24} />
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 items-end">
+                    <input
+                      type="text"
+                      value={answers[index]}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
+                      disabled={submitted && checkAnswer(index)}
+                      placeholder={`Nhập ${clue.answer.length} chữ...`}
+                      className={`flex-1 px-3 py-2 border-2 rounded-lg font-mono font-bold text-center uppercase transition-all ${
+                        submitted && checkAnswer(index)
+                          ? 'border-green-500 bg-green-100 text-green-700'
+                          : submitted && !checkAnswer(index)
+                          ? 'border-red-500 bg-red-100 text-red-700'
+                          : 'border-gray-300 hover:border-red-400'
+                      }`}
+                    />
+                    <button
+                      onClick={() => toggleHint(index)}
+                      className="p-2 bg-yellow-100 hover:bg-yellow-200 rounded-lg transition-all transform hover:scale-105"
+                      title="Xem hình ảnh gợi ý"
+                    >
+                      <Lightbulb size={20} className="text-yellow-600" />
+                    </button>
+                  </div>
+
+                    {hints[index] && (
+                        <div className="mt-3 pt-3 border-t-2 border-yellow-300">
+                            <img
+                            src={clue.hintImage}
+                            alt="Gợi ý hình ảnh"
+                            className="w-full h-48 object-cover rounded-lg shadow-md cursor-zoom-in"
+                            onClick={() => setModalImage(clue.hintImage)}
+                            />
+                        </div>
+                    )}
+
+
+                  {submitted && !checkAnswer(index) && (
+                    <div className="mt-3 pt-3 border-t-2 border-red-300 text-sm text-red-700 font-semibold">
+                      Đáp án đúng: {clue.answer}
+                    </div>
+                  )}
+
+                  {answers[index] && (
+                    <div className="mt-2 flex justify-between text-xs">
+                      {Array.from(clue.answer).map((letter, pos) => {
+                        const isGolden = pos === clue.goldenLetterIndex;
+
+                        // Khi chưa bấm nộp -> không hiển thị đúng/sai
+                        if (!submitted) {
+                            return (
+                            <div
+                                key={pos}
+                                className={`w-6 h-6 flex items-center justify-center rounded font-bold text-white ${
+                                isGolden ? 'bg-yellow-500' : 'bg-gray-300'
+                                }`}
+                            >
+                                {answers[index][pos] || ''}
+                            </div>
+                            );
+                        }
+
+                        // Khi đã nộp -> hiện đúng (xanh) sai (đỏ)
+                        return (
+                            <div
+                            key={pos}
+                            className={`w-6 h-6 flex items-center justify-center rounded font-bold text-white ${
+                                isGolden
+                                ? 'bg-yellow-500'
+                                : answers[index][pos] === letter
+                                ? 'bg-green-500'
+                                : 'bg-red-500'
+                            }`}
+                            >
+                            {answers[index][pos] || ''}
+                            </div>
+                        );
+                        })}
+
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex gap-4">
+              <button
+                onClick={handleSubmit}
+                disabled={answers.some(a => a === '')}
+                className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all transform hover:scale-105 ${
+                  answers.some(a => a === '')
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : submitted
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-red-600 hover:bg-red-700 text-white'
+                }`}
+              >
+                {submitted ? 'Kiểm tra lại' : 'Kiểm tra đáp án'}
+              </button>
+              {submitted && (
+                <button
+                  onClick={resetGame}
+                  className="flex-1 px-6 py-3 rounded-lg font-bold bg-gray-600 hover:bg-gray-700 text-white transition-all transform hover:scale-105"
+                >
+                  Chơi lại
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* <div>
+          <div className="bg-white rounded-xl shadow-xl p-6 sticky top-24">
+            <h3 className="font-bold text-lg text-red-700 mb-4">Từ khóa dọc</h3>
+            <div className="bg-gradient-to-b from-yellow-50 to-yellow-100 rounded-lg p-4 border-2 border-yellow-400">
+              <div className="flex justify-center gap-1 mb-4">
+                {Array.from({ length: 16 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-10 h-10 flex items-center justify-center rounded font-bold text-sm ${
+                      getVerticalWord()[i]
+                        ? 'bg-yellow-500 text-white shadow-lg'
+                        : 'bg-yellow-200 text-gray-400 border-2 border-dashed border-yellow-400'
+                    }`}
+                  >
+                    {getVerticalWord()[i] || '?'}
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-gray-600 text-sm font-semibold">
+                {getVerticalWord().length === 16 && !getVerticalWord().includes('')
+                  ? getVerticalWord()
+                  : 'Chưa hoàn thành...'}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="font-bold text-red-700 mb-3">Tiến độ</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Hàng đã điền:</span>
+                  <span className="font-bold text-blue-600">
+                    {answers.filter(a => a).length}/16
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span>Hàng đúng:</span>
+                  <span className="font-bold text-green-600">
+                    {submitted ? crosswordClues.filter((_, i) => checkAnswer(i)).length : '-'}/16
+                  </span>
+                </div>
+              </div>
+              <div className="mt-4 bg-gray-200 h-3 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all ${
+                    allCorrect && submitted ? 'bg-green-500' : 'bg-blue-500'
+                  }`}
+                  style={{
+                    width: submitted
+                      ? `${(crosswordClues.filter((_, i) => checkAnswer(i)).length / 16) * 100}%`
+                      : `${(answers.filter(a => a).length / 16) * 100}%`
+                  }}
+                ></div>
+              </div>
+            </div>
+
+            {allCorrect && submitted && (
+              <div className="mt-6 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-500 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-green-600 mb-2">Xuất sắc!</div>
+                <p className="text-sm text-green-700">
+                  Bạn đã giải quyết thành công trò chơi ô chữ!
+                </p>
+              </div>
+            )}
+          </div>
+        </div> */}
+      </div>
+
+      <div className="mt-8 bg-blue-50 border-l-4 border-blue-500 rounded-lg p-6">
+        <h4 className="font-bold text-blue-700 mb-3">Hướng dẫn chơi:</h4>
+        <ul className="text-sm text-blue-700 space-y-2">
+          <li className="flex items-start">
+            <span className="mr-2">1.</span>
+            <span>Đọc gợi ý cho mỗi hàng ngang</span>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">2.</span>
+            <span>Nhập đáp án vào ô trắng</span>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">3.</span>
+            <span>Nhấp nút vàng để xem hình ảnh gợi ý</span>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">4.</span>
+            <span>16 ô vàng tạo thành từ khóa cuối cùng</span>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">5.</span>
+            <span>Nhấp "Kiểm tra đáp án" khi hoàn thành</span>
+          </li>
+        </ul>
+      </div>
+      {modalImage && (
+        <div
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+            onClick={() => setModalImage(null)}
+        >
+            <img
+            src={modalImage}
+            alt="Zoomed hint"
+            className="max-w-full max-h-full rounded-lg shadow-lg"
+            />
+        </div>
+        )}
+
+    </div>
+    
+  );
+}
+
+export default Crossword;
