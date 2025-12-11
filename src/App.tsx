@@ -24,10 +24,10 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
-                <span className="text-red-700 text-xl font-bold">★</span>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                <span className="text-yellow-400 text-xl font-bold">★</span>
               </div>
-              <h1 className="text-xl font-bold hidden sm:block">Lãnh Đạo Của Đảng 1954-1975</h1>
+              <h1 className="text-xl font-bold hidden sm:block">Lịch sử Đảng Cộng sản Việt Nam</h1>
             </div>
 
             <div className="flex items-center space-x-1 sm:space-x-2">

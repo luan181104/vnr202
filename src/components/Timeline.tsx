@@ -197,7 +197,7 @@ function Timeline() {
           className="overflow-x-auto pb-6 scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          <div className="flex space-x-8 min-w-max px-4">
+          <div className="flex space-x-8 min-w-max px-4 pt-3">
             {timelineEvents.map((event, index) => (
               <div
                 key={index}

@@ -1,7 +1,7 @@
-import { BookOpen, GamepadIcon, ImageIcon, ArrowRight } from 'lucide-react';
+import { BookOpen, GamepadIcon, ImageIcon, ArrowRight, Puzzle } from 'lucide-react';
 
 interface HomePageProps {
-  onNavigate: (section: 'home' | 'content' | 'quiz' | 'gallery') => void;
+  onNavigate: (section: 'home' | 'content' | 'quiz' | 'gallery' | 'crossword') => void;
 }
 
 function HomePage({ onNavigate }: HomePageProps) {
@@ -9,9 +9,10 @@ function HomePage({ onNavigate }: HomePageProps) {
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-12 animate-fadeIn">
         <div className="mb-6">
-          <div className="w-24 h-24 bg-gradient-to-br from-red-600 to-red-700 rounded-full mx-auto flex items-center justify-center shadow-2xl animate-pulse-slow">
+          <div className="w-32 h-24 bg-gradient-to-br from-red-600 to-red-700 rounded-none mx-auto flex items-center justify-center shadow-2xl animate-pulse-slow">
             <span className="text-yellow-400 text-5xl">★</span>
           </div>
+
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-red-700 mb-4">
           Sự Lãnh Đạo Của Đảng
@@ -23,7 +24,7 @@ function HomePage({ onNavigate }: HomePageProps) {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
+      <div className="grid md:grid-cols-2 gap-6 mb-12">
         <div
           onClick={() => onNavigate('content')}
           className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:scale-105 cursor-pointer animate-slideInLeft border-t-4 border-red-600"
@@ -56,6 +57,24 @@ function HomePage({ onNavigate }: HomePageProps) {
             <ArrowRight className="text-yellow-600" />
           </div>
         </div>
+
+        <div
+          onClick={() => onNavigate('crossword')}
+          className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:scale-105 cursor-pointer animate-fadeIn border-t-4 border-blue-600"
+          style={{ animationDelay: '0.2s' }}
+        >
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <Puzzle size={32} className="text-blue-600" />
+          </div>
+          <h3 className="text-xl font-bold text-blue-700 mb-2 text-center">Ô chữ</h3>
+          <p className="text-gray-600 text-center mb-4">
+            Trò chơi ô chữ tương tác, tìm chữ vàng và câu trả lời ẩn
+          </p>
+          <div className="flex justify-center">
+            <ArrowRight className="text-blue-600" />
+          </div>
+        </div>
+
 
         <div
           onClick={() => onNavigate('gallery')}

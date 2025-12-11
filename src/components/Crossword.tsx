@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Lightbulb, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Lightbulb, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface CrosswordClue {
   clue: string;
@@ -114,13 +114,17 @@ function Crossword() {
   const [hints, setHints] = useState<boolean[]>(new Array(crosswordClues.length).fill(false));
   const [submitted, setSubmitted] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
+  const inputRefs = useRef<(HTMLInputElement | null)[][]>(
+  crosswordClues.map(clue => new Array(clue.answer.length).fill(null))
+);
 
 
-  const handleInputChange = (index: number, value: string) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = value.toUpperCase().replace(/[^A-Z0-9ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ]/g, '');
-    setAnswers(newAnswers);
-  };
+
+  // const handleInputChange = (index: number, value: string) => {
+  //   const newAnswers = [...answers];
+  //   newAnswers[index] = value.toUpperCase().replace(/[^A-Z0-9ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ]/g, '');
+  //   setAnswers(newAnswers);
+  // };
 
   const toggleHint = (index: number) => {
     const newHints = [...hints];
@@ -128,23 +132,23 @@ function Crossword() {
     setHints(newHints);
   };
 
-  const getVerticalWord = () => {
-    return crosswordClues
-      .map((clue, index) => {
-        const answer = answers[index];
-        if (answer.length > clue.goldenLetterIndex) {
-          return answer[clue.goldenLetterIndex];
-        }
-        return '';
-      })
-      .join('');
-  };
+  // const getVerticalWord = () => {
+  //   return crosswordClues
+  //     .map((clue, index) => {
+  //       const answer = answers[index];
+  //       if (answer.length > clue.goldenLetterIndex) {
+  //         return answer[clue.goldenLetterIndex];
+  //       }
+  //       return '';
+  //     })
+  //     .join('');
+  // };
 
   const checkAnswer = (index: number) => {
     return answers[index] === crosswordClues[index].answer;
   };
 
-  const allCorrect = crosswordClues.every((_, index) => checkAnswer(index));
+  // const allCorrect = crosswordClues.every((_, index) => checkAnswer(index));
 
   const handleSubmit = () => {
     setSubmitted(true);
@@ -203,20 +207,45 @@ function Crossword() {
                   </div>
 
                   <div className="flex gap-2 items-end">
-                    <input
-                      type="text"
-                      value={answers[index]}
-                      onChange={(e) => handleInputChange(index, e.target.value)}
-                      disabled={submitted && checkAnswer(index)}
-                      placeholder={`Nhập ${clue.answer.length} chữ...`}
-                      className={`flex-1 px-3 py-2 border-2 rounded-lg font-mono font-bold text-center uppercase transition-all ${
-                        submitted && checkAnswer(index)
-                          ? 'border-green-500 bg-green-100 text-green-700'
-                          : submitted && !checkAnswer(index)
-                          ? 'border-red-500 bg-red-100 text-red-700'
-                          : 'border-gray-300 hover:border-red-400'
-                      }`}
-                    />
+                    <div className="flex gap-1">
+                      {Array.from(clue.answer).map((letter, pos) => {
+                        const isGolden = pos === clue.goldenLetterIndex;
+
+                        return (
+                          <input
+                            key={pos}
+                            type="text"
+                            maxLength={1}
+                            ref={(el) => (inputRefs.current[index][pos] = el)}
+                            value={answers[index][pos] || ''}
+                            onChange={(e) => {
+                              const newAnswers = [...answers];
+                              const arr = newAnswers[index].split('');
+                              arr[pos] = e.target.value.toUpperCase();
+                              newAnswers[index] = arr.join('');
+                              setAnswers(newAnswers);
+
+                              // Auto-focus ô tiếp theo
+                              if (e.target.value && pos < clue.answer.length - 1) {
+                                inputRefs.current[index][pos + 1]?.focus();
+                              }
+                              
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Backspace' && !answers[index][pos] && pos > 0) {
+                                inputRefs.current[index][pos - 1]?.focus();
+                              }
+                            }}
+
+                            className={`w-8 h-8 text-center border-2 rounded font-bold uppercase transition-all ${
+                              isGolden ? 'bg-yellow-500 text-white border-yellow-600' : 'bg-gray-100 text-gray-800 border-gray-300'
+                            }`}
+                          />
+                        );
+                      })}
+                    </div>
+
+
                     <button
                       onClick={() => toggleHint(index)}
                       className="p-2 bg-yellow-100 hover:bg-yellow-200 rounded-lg transition-all transform hover:scale-105"
@@ -244,7 +273,7 @@ function Crossword() {
                     </div>
                   )}
 
-                  {answers[index] && (
+                  {/* {answers[index] && (
                     <div className="mt-2 flex justify-between text-xs">
                       {Array.from(clue.answer).map((letter, pos) => {
                         const isGolden = pos === clue.goldenLetterIndex;
@@ -281,7 +310,7 @@ function Crossword() {
                         })}
 
                     </div>
-                  )}
+                  )} */}
                 </div>
               ))}
             </div>
