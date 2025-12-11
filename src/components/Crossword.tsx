@@ -5,108 +5,91 @@ interface CrosswordClue {
   clue: string;
   answer: string;
   goldenLetterIndex: number;
-  hintImage: string;
 }
 
 const crosswordClues: CrosswordClue[] = [
   {
     clue: '______ chia cắt đất nước thành hai miền',
-    answer: 'VITUYEN17',
-    goldenLetterIndex: 2,
-    hintImage: '/assets/vituyen17.jpg'
+    answer: 'VklUVVlFTjE3',
+    goldenLetterIndex: 2  
   },
   {
     clue: 'Phong trào ______ 1960 bùng nổ ở Bến Tre',
-    answer: 'DONGKHOI',
+    answer: 'RE9OR0tIT0k=',
     goldenLetterIndex: 5,
-    hintImage: '/assets/dongkhoi.jpg'
   },
   {
     clue: '______ Đảng lần III xác định đường lối cách mạng hai miền',
-    answer: 'DAIHOI',
+    answer: 'REFJSE9J',
     goldenLetterIndex: 4,
-    hintImage: '/assets/daihoidang3.jpg'
   },
   {
     clue: '______ Dân tộc Giải phóng miền Nam thành lập 12/1960',
-    answer: 'MATTRAN',
+    answer: 'TUFUVFJBTg==',
     goldenLetterIndex: 6,
-    hintImage: '/assets/dongkhoi.jpg'
   },
   {
     clue: ' Hiệp  định ______ chia cắt đất nước tại vĩ tuyến 17 năm 1954',
-    answer: 'GIONEVO',
+    answer: 'R0lPTkVWTw==',
     goldenLetterIndex: 0,
-    hintImage: '/assets/gionevo.jpg'
   },
   {
     clue: 'Tết ______ 1968 - tổng tiến công làm lung lay ý chí Mỹ',
-    answer: 'MAUTHAN',
+    answer: 'TUFVVEhBTg==',
     goldenLetterIndex: 6,
-    hintImage: '/assets/tetmauthan.jpg'
   },
   {
     clue: '______ miền Bắc bắn rơi hàng trăm máy bay B-52',
-    answer: 'PHONGKHONG',
+    answer: 'UEhPTkdLSE9ORw==',
     goldenLetterIndex: 1,
-    hintImage: '/assets/phongkhong.jpg'
   },
   {
     clue: 'Hiệp định ______ 1973 buộc Mỹ rút quân khỏi Việt Nam',
-    answer: 'PARIS',
+    answer: 'UEFSSVM=',
     goldenLetterIndex: 1,
-    hintImage: '/assets/hiepdinhpari.jpg'
   },
   {
     clue: 'Chiến dịch______1975 mở màn Chiến dịch Hồ Chí Minh',
-    answer: 'TAYNGUYEN',
+    answer: 'VEFZTkdVWUVO',
     goldenLetterIndex: 0,
-    hintImage: '/assets/xaydungdatnuoc.jpg'
-  },//tiep
+  },
   {
     clue: '______ ra đời ngày 3/2/1930',
-    answer: 'DANGCONGSANVIETNAM',
+    answer: 'REFOR0NPTkdTQU5WSUVUTkFN',
     goldenLetterIndex: 0,
-    hintImage: '/assets/dangcongsan.jpg'
   },
   {
     clue: '______ khởi xướng đường lối đổi mới năm 1986',
-    answer: 'DAIHOI6',
+    answer: 'REFJSE9JNg==',
     goldenLetterIndex: 1,
-    hintImage: '/assets/daihoi6.jpg'
   },
   {
     clue: ' Ngày 18/8/1965, trên đất ______ đã diễn ra trận đánh diệt Mỹ quy mô lớn đầu tiên của quân và dân miền Nam.',
-    answer: 'VANTUONG',
+    answer: 'VkFOVFVPTkc=',
     goldenLetterIndex: 3,
-    hintImage: '/assets/vantuong.jpg'
   },
   {
     clue: 'Khu vực được dựng lên để gom dân, cô lập cơ sở cách mạng gọi là ______',
-    answer: 'APCHIENLUOC',
+    answer: 'QVBDSElFTkxVT0M=',
     goldenLetterIndex: 6,
-    hintImage: '/assets/apchienluoc.jpg'
   },
   {
     clue: 'Xe tăng T-54 mang số hiệu 843 do ______ điều khiển đã húc đổ cổng Dinh Độc Lập',
-    answer: 'BUIQUANGTHAN',
+    answer: 'QlVJUVVBTkdUSEFO',
     goldenLetterIndex: 1,
-    hintImage: '/assets/hauphuong.jpg'
   },
   {
     clue: 'Nhà máy nhiệt điện lớn của Quảng Ninh, một trong những biểu tượng của công nghiệp nặng miền Bắc thời chống Mỹ?',
-    answer: 'UONGBI',
+    answer: 'VU9OR0JJ',
     goldenLetterIndex: 1,
-    hintImage: '/assets/uongbi.jpg'
   },
   {
     clue: 'Chiến lược quân sự của Mỹ nhằm "tìm diệt" lực lượng cách mạng, đẩy mạnh bình định miền Nam, thực hiện từ 1965 đến 1968.',
-    answer: 'CHIENTRANHCUCBO',
+    answer: 'Q0hJRU5UUkFOSENVQ0JP',
     goldenLetterIndex: 10,
-    hintImage: '/assets/chientranhcucbo.jpg'
-  },
-    
+  }
 ];
+
 
 function Crossword() {
   const [answers, setAnswers] = useState<string[]>(new Array(crosswordClues.length).fill(''));
@@ -116,7 +99,8 @@ function Crossword() {
   const [modalImage, setModalImage] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[][]>(
   crosswordClues.map(clue => new Array(clue.answer.length).fill(null))
-);
+  );
+  const decode = (str: string) => atob(str);
 
 
 
@@ -145,8 +129,9 @@ function Crossword() {
   // };
 
   const checkAnswer = (index: number) => {
-    return answers[index] === crosswordClues[index].answer;
-  };
+  return answers[index] === decode(crosswordClues[index].answer);
+};
+
 
   // const allCorrect = crosswordClues.every((_, index) => checkAnswer(index));
 
@@ -192,7 +177,7 @@ function Crossword() {
                         Hàng {index + 1}: {clue.clue}
                       </div>
                       <div className="text-sm text-gray-500 mb-2">
-                        ({clue.answer.length} chữ)
+                        ({decode(clue.answer).length} chữ)
                       </div>
                     </div>
                     {submitted && (
@@ -208,7 +193,7 @@ function Crossword() {
 
                   <div className="flex gap-2 items-end">
                     <div className="flex gap-1">
-                      {Array.from(clue.answer).map((letter, pos) => {
+                      {Array.from(decode(clue.answer)).map((letter, pos) => {
                         const isGolden = pos === clue.goldenLetterIndex;
 
                         return (
@@ -244,18 +229,9 @@ function Crossword() {
                         );
                       })}
                     </div>
-
-
-                    <button
-                      onClick={() => toggleHint(index)}
-                      className="p-2 bg-yellow-100 hover:bg-yellow-200 rounded-lg transition-all transform hover:scale-105"
-                      title="Xem hình ảnh gợi ý"
-                    >
-                      <Lightbulb size={20} className="text-yellow-600" />
-                    </button>
                   </div>
 
-                    {hints[index] && (
+                    {/* {hints[index] && (
                         <div className="mt-3 pt-3 border-t-2 border-yellow-300">
                             <img
                             src={clue.hintImage}
@@ -264,14 +240,14 @@ function Crossword() {
                             onClick={() => setModalImage(clue.hintImage)}
                             />
                         </div>
-                    )}
+                    )} */}
 
 
-                  {submitted && !checkAnswer(index) && (
+                  {/* {submitted && !checkAnswer(index) && (
                     <div className="mt-3 pt-3 border-t-2 border-red-300 text-sm text-red-700 font-semibold">
-                      Đáp án đúng: {clue.answer}
+                      Đáp án đúng: {decode(clue.answer)}
                     </div>
-                  )}
+                  )} */}
 
                   {/* {answers[index] && (
                     <div className="mt-2 flex justify-between text-xs">

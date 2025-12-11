@@ -6,7 +6,7 @@ interface GalleryItem {
   title: string;
   description: string;
   year: string;
-  category: 'north' | 'south' | 'both';
+  category: 'north' | 'south' | 'both' | 'summary';
   imageUrl: string;
 }
 
@@ -130,23 +130,34 @@ const galleryItems: GalleryItem[] = [
     year: '1976',
     category: 'both',
     imageUrl: '/assets/xaydungdatnuoc.jpg'
+  },
+  {
+    id: 16,
+    title: 'Sơ đồ tư duy tổng hợp',
+    description: 'Sơ đồ tổng hợp toàn bộ nội dung lịch sử 1954–1975.',
+    year: 'Tổng hợp',
+    category: 'summary',
+    imageUrl: '/assets/sodotonghop.png'
   }
 ];
 
 function Gallery() {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'north' | 'south' | 'both'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'north' | 'south' | 'both' | 'summary'>('all');
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const filteredItems = selectedCategory === 'all'
-    ? galleryItems
+  const filteredItems =
+  selectedCategory === 'all'
+    ? galleryItems.filter(item => item.category !== 'summary')
     : galleryItems.filter(item => item.category === selectedCategory);
+
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'north': return 'bg-blue-500';
       case 'south': return 'bg-green-500';
       case 'both': return 'bg-red-600';
+      case 'summary': return 'bg-yellow-500';
       default: return 'bg-gray-500';
     }
   };
@@ -156,6 +167,7 @@ function Gallery() {
       case 'north': return 'Miền Bắc';
       case 'south': return 'Miền Nam';
       case 'both': return 'Cả nước';
+      case 'summary': return 'Tổng hợp';
       default: return '';
     }
   };
@@ -186,9 +198,9 @@ function Gallery() {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-red-700 mb-4 flex items-center justify-center">
           <ImageIcon className="mr-2" />
-          Thư viện ảnh lịch sử
+          Thư viện ảnh
         </h2>
-        <p className="text-gray-600">Bộ sưu tập hình ảnh và tài liệu về giai đoạn 1954-1975</p>
+        <p className="text-gray-600">Bộ sưu tập hình ảnh và tài liệu</p>
       </div>
 
       <div className="flex justify-center mb-8 flex-wrap gap-2">
@@ -232,6 +244,17 @@ function Gallery() {
         >
           Cả nước ({galleryItems.filter(i => i.category === 'both').length})
         </button>
+        <button
+          onClick={() => setSelectedCategory('summary')}
+          className={`px-6 py-2 rounded-lg font-semibold transition-all transform hover:scale-105 ${
+            selectedCategory === 'summary'
+              ? 'bg-yellow-500 text-white shadow-lg'
+              : 'bg-white text-yellow-600 border-2 border-yellow-500'
+          }`}
+         >
+          Tổng hợp ({galleryItems.filter(i => i.category === 'summary').length})
+        </button>
+
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

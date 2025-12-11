@@ -92,30 +92,6 @@ function HomePage({ onNavigate }: HomePageProps) {
           </div>
         </div>
       </div>
-
-      <div className="bg-gradient-to-r from-red-700 to-red-600 rounded-xl shadow-xl p-8 text-white">
-        <h2 className="text-2xl font-bold mb-4 text-center">Bối cảnh lịch sử</h2>
-        <div className="grid md:grid-cols-2 gap-6 text-sm leading-relaxed">
-          <div className="bg-red-800 bg-opacity-50 rounded-lg p-4">
-            <h3 className="font-bold mb-2 text-yellow-300">Sau Hiệp định Giơnevơ (1954)</h3>
-            <ul className="space-y-1 text-red-50">
-              <li>• Đất nước tạm thời chia cắt hai miền</li>
-              <li>• Miền Bắc: hoàn toàn giải phóng</li>
-              <li>• Miền Nam: dưới ách Mỹ - Diệm</li>
-              <li>• Mục tiêu: thống nhất đất nước</li>
-            </ul>
-          </div>
-          <div className="bg-red-800 bg-opacity-50 rounded-lg p-4">
-            <h3 className="font-bold mb-2 text-yellow-300">Đường lối của Đảng</h3>
-            <ul className="space-y-1 text-red-50">
-              <li>• Một Đảng lãnh đạo</li>
-              <li>• Hai chiến lược cách mạng</li>
-              <li>• Miền Bắc: xây dựng CNXH</li>
-              <li>• Miền Nam: giải phóng dân tộc</li>
-            </ul>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
