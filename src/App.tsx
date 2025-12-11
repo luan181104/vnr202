@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, BookOpen, GamepadIcon, ImageIcon, Volume2, VolumeX, Puzzle } from 'lucide-react';
+import { Home, BookOpen, ImageIcon, Volume2, VolumeX, Puzzle } from 'lucide-react';
 import ContentSection from './components/ContentSection';
 import Gallery from './components/Gallery';
 import HomePage from './components/HomePage';
@@ -51,7 +51,7 @@ function App() {
                 <span className="hidden sm:inline">Nội dung</span>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setCurrentSection('quiz')}
                 className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all transform hover:scale-105 ${
                   currentSection === 'quiz' ? 'bg-red-800 shadow-lg' : 'hover:bg-red-600'
@@ -59,7 +59,7 @@ function App() {
               >
                 <GamepadIcon size={18} />
                 <span className="hidden sm:inline">Trắc nghiệm</span>
-              </button>
+              </button> */}
 
               <button
                 onClick={() => setCurrentSection('crossword')}

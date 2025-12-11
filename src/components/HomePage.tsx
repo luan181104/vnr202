@@ -24,7 +24,7 @@ function HomePage({ onNavigate }: HomePageProps) {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
+      <div className="grid md:grid-cols-3 gap-6 mb-12">
         <div
           onClick={() => onNavigate('content')}
           className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:scale-105 cursor-pointer animate-slideInLeft border-t-4 border-red-600"
@@ -41,7 +41,7 @@ function HomePage({ onNavigate }: HomePageProps) {
           </div>
         </div>
 
-        <div
+        {/* <div
           onClick={() => onNavigate('quiz')}
           className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:scale-105 cursor-pointer animate-fadeIn border-t-4 border-yellow-500"
           style={{ animationDelay: '0.1s' }}
@@ -56,7 +56,7 @@ function HomePage({ onNavigate }: HomePageProps) {
           <div className="flex justify-center">
             <ArrowRight className="text-yellow-600" />
           </div>
-        </div>
+        </div> */}
 
         <div
           onClick={() => onNavigate('crossword')}
