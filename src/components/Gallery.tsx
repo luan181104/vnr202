@@ -198,7 +198,7 @@ function Gallery() {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-red-700 mb-4 flex items-center justify-center">
           <ImageIcon className="mr-2" />
-          Thư viện ảnh
+          Thư viện ảnh và video
         </h2>
         <p className="text-gray-600">Bộ sưu tập hình ảnh và tài liệu</p>
       </div>
@@ -256,6 +256,23 @@ function Gallery() {
         </button>
 
       </div>
+
+      {selectedCategory === 'summary' && (
+  <div className="mb-10">
+    <h3 className="text-2xl font-bold text-yellow-600 mb-4 text-center">
+      Video tổng hợp giai đoạn 1954 – 1975
+    </h3>
+
+    <video
+      src="/assets/tonghop3.mp4"
+      controls
+      className="w-full max-h-[600px] mx-auto rounded-xl shadow-xl bg-black"
+    >
+      Trình duyệt của bạn không hỗ trợ video.
+    </video>
+  </div>
+)}
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredItems.map((item, index) => (
